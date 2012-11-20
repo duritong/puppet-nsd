@@ -12,20 +12,24 @@ class nsd::base {
       purge   => true,
       force   => true,
       recurse => true,
+      notify  => Exec['rebuild_nsd_config'],
       owner   => root,
       group   => 0,
       mode    => '0644';
     '/etc/nsd/conf.d/includes.conf':
       ensure  => present,
+      notify  => Exec['rebuild_nsd_config'],
       owner   => root,
       group   => 0,
       mode    => '0644';
-  } ~> exec{'rebuild_nsd_config':
-    command     => 'service nsd rebuild',
-    refreshonly => true,
-  } ~> service{'nsd':
+  }
+
+  service{'nsd':
     ensure => running,
     enable => true,
+  } -> exec{'rebuild_nsd_config':
+    command     => 'service nsd reload',
+    refreshonly => true,
   }
 
   if $nsd::interface != '' {
