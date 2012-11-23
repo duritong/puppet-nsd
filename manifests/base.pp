@@ -8,6 +8,7 @@ class nsd::base {
     '/etc/nsd/conf.d':
       ensure  => directory,
       require => Package['nsd'],
+      notify  => Exec['rebuild_nsd_config'],
       purge   => true,
       force   => true,
       recurse => true,
@@ -16,10 +17,13 @@ class nsd::base {
       mode    => '0644';
     '/etc/nsd/conf.d/includes.conf':
       ensure  => present,
+      notify  => Exec['rebuild_nsd_config'],
       owner   => root,
       group   => 0,
       mode    => '0644';
-  } ~> exec{'rebuild_nsd_config':
+  }
+  
+  exec{'rebuild_nsd_config':
     command     => 'service nsd rebuild',
     refreshonly => true,
   } ~> service{'nsd':
