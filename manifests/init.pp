@@ -10,7 +10,7 @@ class nsd(
   $interface           = '',
   $manage_munin        = false,
   $manage_shorewall    = false,
-  $nagios_test_domains = 'absent'
+  $nagios_test_domain = 'absent'
 ) {
   include nsd::base
   if $manage_munin {
@@ -21,9 +21,9 @@ class nsd(
   }
   if $nagios_test_domains != 'absent' {
     nagios::service::dns{
-      $nagios_test_domains:
-        comment => 'nsd',
-        ip      => $nsd::interface ? { 
+      "nsd_${nagios_test_domain}":
+        check_domain  => $nagios_test_domain,
+        ip            => $nsd::interface ? {
           ''      => $::ipaddress,
           default => $nsd::interface
         }   
