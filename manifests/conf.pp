@@ -19,9 +19,9 @@ define nsd::conf(
   }
 
   file_line{"${name}_nsd_include":
-    line => "Include: /etc/nsd/conf.d/${name}.conf",
-    file => "/etc/nsd/conf.d/includes.conf",
-    ensure => $ensure,
+    ensure  => $ensure,
+    line    => "Include: /etc/nsd/conf.d/${name}.conf",
+    path    => "/etc/nsd/conf.d/includes.conf",
   }
 }
 

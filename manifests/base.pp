@@ -33,7 +33,7 @@ class nsd::base {
 
   file_line{'nsd_conf_includes':
     line    => 'include: "/etc/nsd/conf.d/includes.conf"',
-    file    => '/etc/nsd/nsd.conf',
+    path    => '/etc/nsd/nsd.conf',
     require => File['/etc/nsd/conf.d/includes.conf'],
     notify  => Exec['rebuild_nsd_config'],
   }
