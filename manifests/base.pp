@@ -38,9 +38,9 @@ class nsd::base {
     notify  => Exec['rebuild_nsd_config'],
   }
   
-  if $nsd::interface != '' {
+  if $nsd::bind_ip_address != '' {
     nsd::conf{'server_interface':
-      content => "interface: ${nsd::interface}\n";
+      content => "ip-address: ${nsd::bind_ip_address}\n";
     }
   }
 }

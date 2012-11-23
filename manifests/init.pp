@@ -7,9 +7,9 @@
 #  * manage_shorewall: open ports in shorewall?
 #  * nagios_test_domains: an array of domains that should tested to be resolved
 class nsd(
-  $interface           = '',
-  $manage_munin        = false,
-  $manage_shorewall    = false,
+  $bind_ip_address    = '',
+  $manage_munin       = false,
+  $manage_shorewall   = false,
   $nagios_test_domain = 'absent'
 ) {
   include nsd::base
@@ -23,9 +23,9 @@ class nsd(
     nagios::service::dns{
       "nsd_${nagios_test_domain}":
         check_domain  => $nagios_test_domain,
-        ip            => $nsd::interface ? {
+        ip            => $nsd::bind_ip_address ? {
           ''      => $::ipaddress,
-          default => $nsd::interface
+          default => $nsd::bind_ip_address
         }   
     }   
   }
