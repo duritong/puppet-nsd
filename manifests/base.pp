@@ -2,13 +2,12 @@
 class nsd::base {
   package{'nsd':
     ensure => present,
-  } -> file_line{'nsd_conf_includes':
-    line    => 'include: "/etc/nsd/conf.d/includes.conf"',
-    file    => '/etc/nsd/nsd.conf',
-    notify  => Exec['rebuild_nsd_config'],
-  } -> file{
+  }
+  
+  file{
     '/etc/nsd/conf.d':
       ensure  => directory,
+      require => Package['nsd'],
       purge   => true,
       force   => true,
       recurse => true,
@@ -28,6 +27,13 @@ class nsd::base {
     enable => true,
   }
 
+  file_line{'nsd_conf_includes':
+    line    => 'include: "/etc/nsd/conf.d/includes.conf"',
+    file    => '/etc/nsd/nsd.conf',
+    require => File['/etc/nsd/conf.d/includes.conf'],
+    notify  => Exec['rebuild_nsd_config'],
+  }
+  
   if $nsd::interface != '' {
     nsd::conf{'server_interface':
       content => "interface: ${nsd::interface}\n";
