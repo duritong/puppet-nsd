@@ -8,10 +8,18 @@ class nsd::munin {
   }
 
   munin::plugin::deploy{
-    'nsd3':
-      source => 'nsd/munin/nsd3' ,
-      # this is the centos pidfile
-      config => "env.pidfile /var/run/nsd/nsd.pid\nuser nsd";
+    'nsd_':
+      source   => 'nsd/munin/nsd_' ,
+      register => false;
+  }
+  munin::plugin{
+    [ 'nsd_hits',
+      'nsd_by_type',
+      'nsd_by_rcode',
+    ]:
+      ensure  => 'nsd_',
+      config  => 'user nsd',
+      require => Munin::Plugin::Deploy['nsd_'];
   }
 }
 
