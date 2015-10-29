@@ -1,9 +1,9 @@
 # main class to setup things for nsd
 class nsd::base {
   package{'nsd':
-    ensure => present,
+    ensure => installed,
   }
-  
+
   file{
     '/etc/nsd/conf.d':
       ensure  => directory,
@@ -16,15 +16,15 @@ class nsd::base {
       group   => 0,
       mode    => '0644';
     '/etc/nsd/conf.d/includes.conf':
-      ensure  => present,
+      ensure  => file,
       notify  => Exec['rebuild_nsd_config'],
       owner   => root,
       group   => 0,
       mode    => '0644';
   }
-  
+
   exec{'rebuild_nsd_config':
-    command     => 'service nsd rebuild',
+    command     => '/usr/sbin/nsdc -c /etc/nsd/nsd.conf rebuild',
     refreshonly => true,
   } ~> service{'nsd':
     ensure => running,
@@ -37,10 +37,15 @@ class nsd::base {
     require => File['/etc/nsd/conf.d/includes.conf'],
     notify  => Exec['rebuild_nsd_config'],
   }
-  
-  if $nsd::bind_ip_address != '' {
-    nsd::conf{'server_interface':
-      content => "ip-address: ${nsd::bind_ip_address}\n";
+
+  nsd::conf{'server_interface': }
+  if $nsd::bind_ip_address != 'all' {
+    Nsd::Conf['server_interface']{
+      content => "ip-address: ${nsd::bind_ip_address}\n",
+    }
+  } else {
+    Nsd::Conf['server_interface']{
+      ensure => absent,
     }
   }
 }
