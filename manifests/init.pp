@@ -25,7 +25,7 @@ class nsd(
   }
   if $nagios_test_domain {
     $check_ip = $bind_ip_address ? {
-      'all'   => $::ipaddress,
+      'all'   => pick($default_ipaddress,$ipaddress),
       default => $bind_ip_address,
     }
     nagios::service::dns{
